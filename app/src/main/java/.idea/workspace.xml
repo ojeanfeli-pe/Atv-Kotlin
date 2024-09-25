@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="892e7f97-0545-4ade-9165-7975e1349ef7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../../../../.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../.idea/modules/app/Atv-Kotlin.app.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../.idea/migrations.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../.idea/other.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.gradle/8.7/dependencies-accessors/c11dd8b43986a019c47c68155452705383c47620/metadata.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.gradle/8.7/dependencies-accessors/c11dd8b43986a019c47c68155452705383c47620/metadata.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.gradle/8.7/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.gradle/8.7/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.gradle/8.7/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.gradle/8.7/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.idea/deploymentTargetSelector.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/example/atv_kotlin/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/com/example/atv_kotlin/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/example/atv_kotlin/produto/Produto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/com/example/atv_kotlin/classes/Produto.kt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="2mWlPCsSXkUa1jQkmXzla8eY1DH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/ATV KOTLIN/Atv-Kotlin/app/src/main/java"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="892e7f97-0545-4ade-9165-7975e1349ef7" name="Changes" comment="" />
+      <created>1727200186118</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1727200186118</updated>
+    </task>
+    <servers />
+  </component>
+</project>

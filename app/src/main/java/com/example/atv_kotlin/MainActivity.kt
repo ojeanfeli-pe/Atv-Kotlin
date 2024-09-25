@@ -8,11 +8,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,7 +37,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.atv_kotlin.produto.Produto
+import com.example.atv_kotlin.classes.Estoque
+import com.example.atv_kotlin.classes.Produto
 import com.google.gson.Gson
 import androidx.compose.material3.ListItem as ListItem
 
@@ -46,36 +49,38 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            LayoutMain()
+           LayoutMain(Estoque())
         }
     }
 }
-
 @Composable
-fun LayoutMain(){
+fun LayoutMain(estoque: Estoque) {
     val navController = rememberNavController()
-    
+
     NavHost(navController = navController, startDestination = "cadastro") {
-
-        composable("cadastro") { CadastroProdutos(navController) }
-        composable("lista") { ListaProdutos(navController )}
-        composable("detalhes") { backStackEntry ->
-
-            val produtoJson =
-                backStackEntry.arguments?.getString("produtoJson")
-
-            val produto = Gson().fromJson(produtoJson, Produto::class.java)
-            DetalhesProduto(navController, produto)
+        composable("cadastro") { CadastroProdutos(navController, estoque) }
+        composable("lista") { ListaProdutos(navController, estoque) }
+        composable("detalhes/{produtoJson}") { backStackEntry ->
+            val produtoJson = backStackEntry.arguments?.getString("produtoJson")
+            if (produtoJson != null) {
+                val produto = Gson().fromJson(produtoJson, Produto::class.java)
+                DetalhesProduto(navController, produto)
+            } else {
+                Toast.makeText(LocalContext.current, "Erro ao carregar detalhes do produto", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+            }
         }
+        composable("estatisticas") { EstatisticasEstoque(navController, estoque) }
     }
 }
 
 @Composable
-fun CadastroProdutos(navController: NavHostController){
+fun CadastroProdutos(navController: NavHostController, estoque: Estoque) {
     var nome by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
     var preco by remember { mutableStateOf("") }
     var quantidade by remember { mutableStateOf("") }
+    var produtoCadastrado by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column(
@@ -85,31 +90,26 @@ fun CadastroProdutos(navController: NavHostController){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier.height(25.dp))
-
         Text(text = "CADASTRO DE PRODUTOS", fontSize = 20.sp)
-
-        Spacer(modifier = Modifier.height(25.dp))
-
 
         TextField(
             value = nome,
             onValueChange = { nome = it },
-            label = { Text(text = "Nome do Produto") },
+            label = { Text("Nome do Produto") },
             modifier = Modifier.fillMaxWidth()
         )
 
         TextField(
             value = categoria,
             onValueChange = { categoria = it },
-            label = { Text(text = "Categoria") },
+            label = { Text("Categoria") },
             modifier = Modifier.fillMaxWidth()
         )
 
         TextField(
             value = preco,
             onValueChange = { preco = it },
-            label = { Text(text = "Preço:") },
+            label = { Text("Preço") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
@@ -117,113 +117,131 @@ fun CadastroProdutos(navController: NavHostController){
         TextField(
             value = quantidade,
             onValueChange = { quantidade = it },
-            label = { Text(text = "Quantidade em Estoque") },
+            label = { Text("Quantidade em Estoque") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
-        Spacer(modifier = Modifier.height(25.dp))
-
         Button(onClick = {
             if (nome.isNotEmpty() && categoria.isNotEmpty() && preco.isNotEmpty() && quantidade.isNotEmpty()) {
-                Produto.produtos.add(Produto(nome, categoria, preco.toFloat(), quantidade.toInt()))
+                val precoFloat = preco.toFloatOrNull()
+                val quantidadeInt = quantidade.toIntOrNull()
 
-                // Limpa os campos após o cadastro
-                nome = ""
-                categoria = ""
-                preco = ""
-                quantidade = ""
-                Toast.makeText(context, "Produto cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
-
-                navController.navigate("cadastro"){
-                    popUpTo("cadastro"){inclusive = true}
+                if (precoFloat != null && precoFloat >= 0 && quantidadeInt != null && quantidadeInt >= 1) {
+                    estoque.adicionarProduto(Produto(nome, categoria, precoFloat, quantidadeInt))
+                    produtoCadastrado = true
+                    Toast.makeText(context, "Produto cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
+                } else {
+                    if (precoFloat == null || precoFloat < 0) {
+                        Toast.makeText(context, "Preço deve ser maior ou igual a zero.", Toast.LENGTH_SHORT).show()
+                    }
+                    if (quantidadeInt == null || quantidadeInt < 1) {
+                        Toast.makeText(context, "Quantidade deve ser maior ou igual a 1.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
                 Toast.makeText(context, "Todos os campos são obrigatórios", Toast.LENGTH_SHORT).show()
-
             }
         }) {
-            Text(text = "Cadastrar Produtos")
+            Text("Cadastrar Produto")
         }
 
-        Spacer(modifier = Modifier.height(25.dp))
-
-        Button(onClick = {
-            navController.navigate("lista")
-        }) {
-            Text(text = "Listar Produtos")
+        if (produtoCadastrado) {
+            Button(onClick = { navController.navigate("lista") }) {
+                Text("Lista de Produtos")
+            }
         }
     }
-
 }
 
 @Composable
-fun ListaProdutos(navController: NavHostController) {
-    // Acesse a lista de produtos da MainActivity
-    val produtos = Produto.produtos
+fun ListaProdutos(navController: NavHostController, estoque: Estoque) {
+    val produtos = estoque.listarProdutos()
 
-    LazyColumn(modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)){
-        items(produtos) { produto ->
-            ListItem(
-                modifier = Modifier.clickable {
-                    // Quando o item é clicado, navegue para a tela de detalhes
-                    val produtoJson = Gson().toJson(produto)
-                    navController.navigate("detalhes?produtoJson=$produtoJson")
-                },
-                headlineContent = { Text("${produto.nome} (${produto.quantidade} unidades)")  },
-                supportingContent = { Text("Categoria: ${produto.categoria}") },
-                trailingContent = {
-                    // Adiciona o botão "Detalhes" ao lado do preço
+    Column(modifier = Modifier.fillMaxSize().padding(15.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        if (produtos.isEmpty()) {
+            Text(text = "Nenhum produto cadastrado.", fontSize = 18.sp)
+        } else {
+            LazyColumn {
+                items(Estoque.instance.listarProdutos()) { produto ->
+
+                    Text(text = "${produto.nome} (${produto.quantidade} unidades)")
+                    Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = {
-                        // Navega para a tela de detalhes ao clicar no botão
                         val produtoJson = Gson().toJson(produto)
-                        navController.navigate("detalhes?produtoJson=$produtoJson")
+                        navController.navigate("detalhes/$produtoJson")
                     }) {
                         Text("Detalhes")
                     }
                 }
-            )
+
+                item {
+                    Button(onClick = { navController.navigate("estatisticas") }) {
+                        Text("Estatísticas")
+                    }
+                }
+            }
+        }
+    }
+        Spacer(modifier = Modifier.width(16.dp).padding(15.dp))
+    }
+
+
+@Composable
+fun DetalhesProduto(navController: NavHostController, produto: Produto) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(15.dp), verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "DETALHES DO PRODUTO", fontSize = 22.sp)
+
+        Text("Nome: ${produto.nome}", fontSize = 18.sp)
+        Text("Categoria: ${produto.categoria}", fontSize = 18.sp)
+        Text("Preço: R$ ${String.format("%.2f", produto.preco)}", fontSize = 18.sp)
+        Text("Quantidade: ${produto.quantidade}", fontSize = 18.sp)
+
+        Button(onClick = { navController.popBackStack() }) {
+            Text("Voltar")
+        }
+    }
+}
+
+
+@Composable
+fun EstatisticasEstoque(navController: NavHostController, estoque: Estoque) {
+    val valorTotalEstoque = estoque.calcularValorTotalEstoque()
+    val quantidadeTotalProdutos = estoque.listarProdutos().sumOf { it.quantidade }
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "ESTATÍSTICAS DO ESTOQUE", fontSize = 22.sp)
+
+        Text("Valor Total do Estoque: R$ ${String.format("%.2f", valorTotalEstoque)}", fontSize = 18.sp)
+        Text("Quantidade Total de Produtos: $quantidadeTotalProdutos", fontSize = 18.sp)
+
+        Button(onClick = { navController.popBackStack() }) {
+            Text("Voltar")
         }
     }
 }
 
 @Composable
-fun DetalhesProduto(navController: NavHostController, produto: Produto){
-    Column (modifier = Modifier
-        .fillMaxSize()
-        .padding(15.dp)) {
-
-        Spacer(modifier = Modifier.height(35.dp))
-
-        Text(text = "DETALHES DOS PRODUTOS", fontSize = 22.sp, modifier = Modifier.fillMaxWidth())
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Text(text = "Nome: ${produto.nome}\n"+
-                "Categoria: ${produto.categoria}\n"+
-                "Preço: R$ ${String.format("%.2f",produto.preco)}\n"+
-                "Quantidade: ${produto.quantidade}\n",
-            fontSize = 18.sp,
-            modifier = Modifier.fillMaxWidth())
-
-        Button(onClick = {
-
-            navController.popBackStack()
-        }) {
-            Text(text = "VOLTAR")
-        }
-    }
+fun MostrarValorTotalEstoque(estoque: Estoque) {
+    val valorTotal = estoque.calcularValorTotalEstoque()
+    Text(
+        text = "Valor Total do Estoque: R$ ${String.format("%.2f", valorTotal)}",
+        fontSize = 18.sp,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+    )
 }
 
-
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun Preview(){
-    LayoutMain()
+fun PreviewCadastro() {
+    LayoutMain(Estoque())
 }
-
-
-
